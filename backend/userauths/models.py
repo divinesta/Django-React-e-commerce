@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models.signals import post_save
 from django.contrib.auth.models import AbstractUser
 from shortuuid.django_fields import ShortUUIDField
 
@@ -47,11 +48,20 @@ class Profile(models.Model):
         if self.full_name:
             return str(self.full_name)
         else:
-            return str(self.user.full_name)  # pylint: disable=no-member
+            return str(self.user.full_name) 
         
     def save(self, *args, **kwargs):
         if not self.full_name:
-            self.full_name = self.user.full_name  # pylint: disable=no-member
+            self.full_name = self.user.full_name  
         
-
         super(Profile, self).save(*args, **kwargs)
+        
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+        
+def save_user_profile(sender, instance, **kwargs):
+    instance.profile.save()
+    
+post_save.connect(create_user_profile, sender=User)
+post_save.connect(save_user_profile, sender=User)

@@ -1,2 +1,8 @@
 [MASTER]
 load-plugins = pylint_django
+
+[MESSAGES CONTROL]
+disable=
+    no-member,
+    missing-docstring,
+    too-few-public-methods
