@@ -1,7 +1,8 @@
 import axios from 'axios';
+import { API_BASE_URL } from './constant';
 
 const apiInstance = axios.create({
-   baseURL: '127.0.0.1:8000/api/v1',
+   baseURL: API_BASE_URL,
    timeout: 5000,
 
    headers: {
