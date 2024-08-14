@@ -7,7 +7,7 @@ const Login = () => {
    const navigate = useNavigate();
    const [email, setEmail] = useState("");
    const [password, setPassword] = useState("");
-   const [loading, setLoading] = useState(false);
+   const [isloading, setIsLoading] = useState(false);
    const [error, setError] = useState(null);
    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
@@ -24,7 +24,7 @@ const Login = () => {
 
    const handleLogin = async (e) => {
       e.preventDefault();
-      setLoading(true);
+      setIsLoading(true);
       try {
          const { error } = await login(email, password );
          if (error) {
@@ -34,14 +34,14 @@ const Login = () => {
             resetForm();
          }
       } finally {
-         setLoading(false);
+         setIsLoading(false);
       }
    };
 
    return (
       <div>
          <h1>HI</h1>
-         {loading ? (
+         {isloading ? (
             <div>Loading...</div>
          ) : (
             <form onSubmit={handleLogin}>
