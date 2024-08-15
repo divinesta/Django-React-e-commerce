@@ -2,11 +2,10 @@ import { useAuthStore } from '../store/auth'
 import axios from './axios'
 import { jwtDecode } from 'jwt-decode'
 import Cookie from 'js-cookie'
-import { API_BASE_URL } from './constant'
 
 export const login = async (email, password) => {
    try {
-      const {data, status } = await axios.post(`${API_BASE_URL}/user/token/`, {
+      const {data, status } = await axios.post(`user/token/`, {
          email,
          password
       })
@@ -22,7 +21,7 @@ export const login = async (email, password) => {
    } catch (error) {
       return {
          data: null,
-         error: error.respone.data?.detail || 'Something went wrong'
+         error: error.response.data?.detail || 'Something went wrong'
       }
    } 
 }
@@ -44,7 +43,7 @@ export const register = async (full_name, email, phone, password, password2) => 
    } catch (error) {
       return {
          data: null,
-         error: error.response.data?.detail || 'Something went wrong'
+         error: error.response.data || 'Something went wrong'
       }
    }
 }

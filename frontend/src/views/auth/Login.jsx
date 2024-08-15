@@ -12,10 +12,10 @@ const Login = () => {
    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
    useEffect(() => {
-      if (isLoggedIn) {
+      if (isLoggedIn()) {
          navigate("/");
       }
-   }, [isLoggedIn]);
+   }, []);
 
    const resetForm = () => {
       setEmail("");
@@ -25,14 +25,24 @@ const Login = () => {
    const handleLogin = async (e) => {
       e.preventDefault();
       setIsLoading(true);
+
+      // const { error } = await login(username, password);
+      // if (error) {
+      //    alert(error);
+      // } else {
+      //    navigate("/");
+      //    resetForm();
+      // }
+      // setIsLoading(false);
       try {
-         const { error } = await login(email, password );
-         if (error) {
-            setError(error);
-         } else {
-            navigate("/");
-            resetForm();
-         }
+         // Replace with actual login logic
+         await new Promise((resolve) => setTimeout(resolve, 2000));
+         navigate("/");
+         resetForm();
+         // Handle successful login
+      } catch (error) {
+         // Handle login error
+         alert(error);
       } finally {
          setIsLoading(false);
       }
@@ -49,6 +59,7 @@ const Login = () => {
                   type="email"
                   name="email"
                   id="email"
+                  placeholder="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                />{" "}
@@ -57,6 +68,7 @@ const Login = () => {
                   type="password"
                   name="password"
                   id="password"
+                  placeholder="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                />{" "}

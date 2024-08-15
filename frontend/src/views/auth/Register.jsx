@@ -15,10 +15,10 @@ const Register = () => {
    const isLoggedIn = useAuthStore((state) => state.isLoggedIn);
 
    useEffect(() => {
-      if (isLoggedIn) {
+      if (isLoggedIn()) {
          navigate("/")
       }
-   }, [isLoggedIn])
+   }, [])
 
    const handleSubmit = async (e) => {
       e.preventDefault()
