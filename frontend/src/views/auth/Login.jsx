@@ -75,6 +75,8 @@ const Login = () => {
                <br /> <br />
                {error && <div style={{ color: "red" }}>{error}</div>}
                <button type="submit">Log in</button>
+               <br/><hr/>
+               <Link to={'/forgot-password'}>Forgot Paswordx</Link>
             </form>
          )}
       </div>
