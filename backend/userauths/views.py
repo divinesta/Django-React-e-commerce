@@ -39,6 +39,7 @@ class PasswordRestEmailVerify(generics.RetrieveAPIView):
          
          link = f"http://localhost:5173/create-new-password?otp={
             otp}&uidb64={uidb64}"
+         print("Link ===", link)
          
          # send email to user
          

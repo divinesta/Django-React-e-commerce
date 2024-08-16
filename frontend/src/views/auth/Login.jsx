@@ -26,60 +26,133 @@ const Login = () => {
       e.preventDefault();
       setIsLoading(true);
 
-      // const { error } = await login(username, password);
-      // if (error) {
-      //    alert(error);
-      // } else {
-      //    navigate("/");
-      //    resetForm();
-      // }
-      // setIsLoading(false);
-      try {
-         // Replace with actual login logic
-         await new Promise((resolve) => setTimeout(resolve, 2000));
+      const { error } = await login(email, password);
+      if (error) {
+         alert(error);
+      } else {
          navigate("/");
          resetForm();
-         // Handle successful login
-      } catch (error) {
-         // Handle login error
-         alert(error);
-      } finally {
-         setIsLoading(false);
       }
+      setIsLoading(false);
+      // try {
+      //    // Replace with actual login logic
+      //    await new Promise((resolve) => setTimeout(resolve, 2000));
+      //    navigate("/");
+      //    resetForm();
+      //    // Handle successful login
+      // } catch (error) {
+      //    // Handle login error
+      //    alert(error);
+      // } finally {
+      //    setIsLoading(false);
+      // }
    };
 
    return (
-      <div>
-         <h1>HI</h1>
-         {isloading ? (
-            <div>Loading...</div>
-         ) : (
-            <form onSubmit={handleLogin}>
-               <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  placeholder="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-               />{" "}
-               <br /> <br />
-               <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  placeholder="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-               />{" "}
-               <br /> <br />
-               {error && <div style={{ color: "red" }}>{error}</div>}
-               <button type="submit">Log in</button>
-               <br/><hr/>
-               <Link to={'/forgot-password'}>Forgot Paswordx</Link>
-            </form>
-         )}
-      </div>
+      <>
+         <section>
+         <main className="" style={{ marginBottom: 100, marginTop: 50 }}>
+            <div className="container">
+               {/* Section: Login form */}
+               <section className="">
+                  <div className="row d-flex justify-content-center">
+                     <div className="col-xl-5 col-md-8">
+                        <div className="card rounded-5">
+                           <div className="card-body p-4">
+                              <h3 className="text-center">Login</h3>
+                              <br />
+
+                              <div className="tab-content">
+                                 <div
+                                    className="tab-pane fade show active"
+                                    id="pills-login"
+                                    role="tabpanel"
+                                    aria-labelledby="tab-login"
+                                 >
+                                    <form onSubmit={handleLogin}>
+                                       {/* Email input */}
+                                       <div className="form-outline mb-4">
+                                          <label
+                                             className="form-label"
+                                             htmlFor="Full Name"
+                                          >
+                                             Email Address
+                                          </label>
+                                          <input
+                                             type="email"
+                                             id="email"
+                                             name="email"
+                                             placeholder="email"
+                                             className="form-control"
+                                             value={email}
+                                             onChange={(e) => setEmail(e.target.value)}
+                                          />
+                                       </div>
+
+                                       <div className="form-outline mb-4">
+                                          <label
+                                             className="form-label"
+                                             htmlFor="loginPassword"
+                                          >
+                                             Password
+                                          </label>
+                                          <input
+                                             type="password"
+                                             id="password"
+                                             name="password"
+                                             placeholder="password"
+                                             className="form-control"
+                                             value={password}
+                                             onChange={(e) => setPassword(e.target.value)}
+                                          />
+                                       </div>
+
+                                       {
+                                          isloading ? (<button
+                                          className="btn btn-primary w-100"
+                                          type="submit"
+                                       >
+                                          <span className="mr-2">Processing </span>
+                                          <i className="fas fa-spinner spin" />
+                                       </button>) : (
+                                             <button
+                                          className="btn btn-primary w-100"
+                                          type="submit"
+                                       >
+                                          <span className="mr-2">Sign In </span>
+                                          <i className="fas fa-sign-in-alt" />
+                                       </button>
+                                          )
+                                       }
+
+                                       <div className="text-center">
+                                          <p className="mt-4">
+                                             Don't have an account?{" "}
+                                             <Link to="/register">
+                                                Register
+                                             </Link>
+                                          </p>
+                                          <p className="mt-0">
+                                             <Link
+                                                to="/forgot-password"
+                                                className="text-danger"
+                                             >
+                                                Forgot Password?
+                                             </Link>
+                                          </p>
+                                       </div>
+                                    </form>
+                                 </div>
+                              </div>
+                           </div>
+                        </div>
+                     </div>
+                  </div>
+               </section>
+            </div>
+         </main>
+      </section>
+      </>
    );
 };
 

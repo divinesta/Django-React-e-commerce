@@ -5,11 +5,15 @@ import Dashboard from './views/auth/Dashboard';
 import Logout from './views/auth/Logout';
 import ForgotPassword from './views/auth/ForgotPassword';
 import CreatePassword from './views/auth/CreatePassword';
+import MainWrapper from './layouts/MainWrapper';
+import StoreHeader from './views/base/StoreHeader';
+import StoreFooter from './views/base/StoreFooter';
 
 const App = () => {
   
   return (
     <BrowserRouter>
+      <StoreHeader />
       <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
@@ -18,6 +22,7 @@ const App = () => {
         <Route path="/create-new-password" element={<CreatePassword />} />
         <Route path="/" element={<Dashboard />} />
       </Routes>
+      <StoreFooter />
     </BrowserRouter>
   )
 }

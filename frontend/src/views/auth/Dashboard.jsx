@@ -18,8 +18,10 @@ const Dashboard = () => {
          ) : (
             <div>
                <h2>Home page</h2>
-               <Link to={`/login`}>Login</Link>
-               <Link to={`/register`}>Register</Link>
+               <div className="d-flex">
+                  <Link className="btn  btn-primary" to={`/login`}>Login</Link>
+                  <Link className="btn btn-success ms-4" to={`/register`}>Register</Link>
+               </div>
             </div>
          )}
       </>
