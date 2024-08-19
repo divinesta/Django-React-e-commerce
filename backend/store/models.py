@@ -32,10 +32,10 @@ class Product(models.Model):
    ]
 
    title = models.CharField(max_length=100, help_text='Name of the product', unique=True, null=False, blank=False)
-   category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
-   # user = models.ForeignKey(User, on_delete=models.CASCADE)
    image = models.FileField(upload_to='product', null=True, blank=True, default="product.jpg")
+   category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, blank=True)
    description = models.TextField(help_text='Description of the product', null=True, blank=True)
+   # user = models.ForeignKey(User, on_delete=models.CASCADE)
    price = models.DecimalField(max_digits=12, decimal_places=2, help_text='Price of the product')
    old_price = models.DecimalField(max_digits=12, decimal_places=2, help_text='Old Price of the product')
    shipping_amount = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, help_text='Shipping amount')
@@ -58,6 +58,22 @@ class Product(models.Model):
    def product_rating(self):
       product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg('rating'))
       return product_rating['avg_rating']
+   
+   def rating_count(self): 
+      return Review.objects.filter(product=self).count()
+      
+   def gallery(self):
+      return Gallery.objects.filter(product=self)
+   
+   def specification(self):
+      return Specification.objects.filter(product=self)
+   
+   def color(self):  
+      return Color.objects.filter(product=self)
+   
+   def size(self):
+      return Size.objects.filter(product=self)
+   
    
    def save(self, *args, **kwargs):
       self.rating = self.product_rating()
