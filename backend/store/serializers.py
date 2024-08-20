@@ -8,6 +8,8 @@ class CategorySerializer(serializers.ModelSerializer):
       model = Category
       fields = "__all__"
       
+   # product_count = serializers.IntegerField(read_only=True)
+      
 class GallerySerializer(serializers.ModelSerializer):
    class Meta:
       model = Gallery
@@ -32,7 +34,7 @@ class ProductSerializer(serializers.ModelSerializer):
    gallery = GallerySerializer(many=True, read_only=True)
    color = ColorSerializer(many=True, read_only=True)
    size = SizeSerializer(many=True, read_only=True)
-   Specification = SpecificationSerializer(many=True, read_only=True)
+   specification = SpecificationSerializer(many=True, read_only=True)
    
    class Meta:
       model = Product
