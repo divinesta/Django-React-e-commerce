@@ -4,6 +4,7 @@ import { useParams } from 'react-router-dom'
 import apiInstance from '../../utils/axios';
 import GetCurrentAddress from '../plugin/UserCountry';
 import UserData from '../plugin/UserData';
+import CartId from '../plugin/CARTID';
 
 
 
@@ -17,6 +18,7 @@ const ProductDetail = () => {
    const param = useParams();
    const currentAddress = GetCurrentAddress();
    const userData = UserData();
+   const cartId = CartId();
 
 
    //console.log(currentAddress.country);
@@ -40,7 +42,6 @@ const ProductDetail = () => {
             setSize(res.data.size);
             // console.log(res.data);
          })
-         
       }, []);
       // console.log(res.data.specification);
 
@@ -70,6 +71,7 @@ const ProductDetail = () => {
          Color: colorValue,
          Size: sizeValue,
          Country: currentAddress.country,
+         Cart_ID: cartId,
       });
    }
 
@@ -243,10 +245,9 @@ const ProductDetail = () => {
                                     <h6>Color: <span>{colorValue}</span></h6>
                                     <div className="d-flex">
                                        {color?.map((colors, index) => (
-                                          <div >
+                                          <div key={index}>
                                              <input type="hidden" className='color_name' value={colors.name} />
                                              <button
-                                                key={index}
                                                 className="btn p-3 ms-1 color_button" onClick={handleColorButtonClick}
                                                 style={{
                                                    backgroundColor: `${colors.color_code}`,
