@@ -8,6 +8,8 @@ import CreatePassword from './views/auth/CreatePassword';
 import MainWrapper from './layouts/MainWrapper';
 import StoreHeader from './views/base/StoreHeader';
 import StoreFooter from './views/base/StoreFooter';
+import Product from './views/store/Product';
+import ProductDetail from './views/store/ProductDetail';
 
 const App = () => {
   
@@ -20,7 +22,11 @@ const App = () => {
         <Route path="/logout" element={<Logout />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/create-new-password" element={<CreatePassword />} />
-        <Route path="/" element={<Dashboard />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+
+        {/* Store Component */}
+        <Route path="/" element={<Product />} />S
+        <Route path="/detail/:slug/" element={<ProductDetail />} />S
       </Routes>
       <StoreFooter />
     </BrowserRouter>
