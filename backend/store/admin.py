@@ -1,5 +1,5 @@
 from django.contrib import admin
-from store.models import Category, Product, Gallery, Specification, Color, Size, Cart, CartOrder, CartOrderItem, Review, Notification, Coupon, Wishlist
+from store.models import Category, Product, Gallery, Specification, Color, Size, Cart, CartOrder, CartOrderItem, Review, Notification, Coupon, Wishlist, Tax
 
 # Register your models here.
 
@@ -67,3 +67,9 @@ class NotificationAdmin(admin.ModelAdmin):
 class CouponAdmin(admin.ModelAdmin):
    list_display = ['vendor', 'code', 'active', 'discount', 'date']
    search_fields = ['vendor', 'code', 'date']
+   
+   
+@admin.register(Tax)
+class TaxAdmin(admin.ModelAdmin):
+   list_display = ['country', 'active', 'rate', 'date']
+   search_fields = ['date']

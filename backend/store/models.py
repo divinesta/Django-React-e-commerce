@@ -305,3 +305,15 @@ class Coupon(models.Model):
       return self.code
    
    
+class Tax(models.Model):
+   country = models.CharField(max_length=100, help_text='Country of the user')
+   rate = models.IntegerField(default=5, help_text='Tax rate')
+   active = models.BooleanField(default=False)
+   date = models.DateTimeField(auto_now_add=True)
+   
+   def __str__(self):
+      return self.country
+   
+   class Meta:
+      verbose_name_plural = 'Taxes'
+      ordering = ['country']
