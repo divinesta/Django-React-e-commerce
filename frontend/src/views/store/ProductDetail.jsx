@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom'
 
 import apiInstance from '../../utils/axios';
 import GetCurrentAddress from '../plugin/UserCountry';
+import UserData from '../plugin/UserData';
 
 
 
@@ -15,6 +16,8 @@ const ProductDetail = () => {
 
    const param = useParams();
    const currentAddress = GetCurrentAddress();
+   const userData = UserData();
+
 
    //console.log(currentAddress.country);
    // if (currentAddress) {
@@ -58,15 +61,16 @@ const ProductDetail = () => {
    // console.log(quantityValue);
 
    const handleAddToCart = () => {
-      console.log(
-         {
-         Product_ID: product.id, 
-         Price: product.price, 
-         Shipping_amount: product.shipping_amount, 
-         Quantity: quantityValue, 
-         Color: colorValue, 
-         Size: sizeValue, 
-         Country: currentAddress.country});
+      console.log({
+         User_ID: userData?.user_id,
+         Product_ID: product.id,
+         Price: product.price,
+         Shipping_amount: product.shipping_amount,
+         Quantity: quantityValue,
+         Color: colorValue,
+         Size: sizeValue,
+         Country: currentAddress.country,
+      });
    }
 
    return (
