@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
+
 import apiInstance from '../../utils/axios';
+import GetCurrentAddress from '../plugin/UserCountry';
 
 
 
@@ -12,6 +14,14 @@ const ProductDetail = () => {
    const [size, setSize] = useState([]);
 
    const param = useParams();
+   const currentAddress = GetCurrentAddress();
+
+   //console.log(currentAddress.country);
+   // if (currentAddress) {
+   //    console.log(currentAddress.country);
+   // } else {
+   //    console.log("Current address is not available");
+   // }
 
    const [colorValue, setColorValue] = useState("No color selected");
    const [sizeValue, setSizeValue] = useState("No size selected");
@@ -48,7 +58,15 @@ const ProductDetail = () => {
    // console.log(quantityValue);
 
    const handleAddToCart = () => {
-      console.log({Product_ID: product.id, Quantity: quantityValue, Color: colorValue, Size: sizeValue});
+      console.log(
+         {
+         Product_ID: product.id, 
+         Price: product.price, 
+         Shipping_amount: product.shipping_amount, 
+         Quantity: quantityValue, 
+         Color: colorValue, 
+         Size: sizeValue, 
+         Country: currentAddress.country});
    }
 
    return (
