@@ -61,18 +61,40 @@ const ProductDetail = () => {
 
    // console.log(quantityValue);
 
-   const handleAddToCart = () => {
-      console.log({
-         User_ID: userData?.user_id,
-         Product_ID: product.id,
-         Price: product.price,
-         Shipping_amount: product.shipping_amount,
-         Quantity: quantityValue,
-         Color: colorValue,
-         Size: sizeValue,
-         Country: currentAddress.country,
-         Cart_ID: cartId,
-      });
+   const handleAddToCart = async () => {
+      // console.log({
+      //    User_ID: userData?.user_id,
+      //    Product_ID: product.id,
+      //    Price: product.price,
+      //    Shipping_amount: product.shipping_amount,
+      //    Quantity: quantityValue,
+      //    Color: colorValue,
+      //    Size: sizeValue,
+      //    Country: currentAddress.country,
+      //    Cart_ID: cartId,
+      // });
+
+      try {
+         const formdata = new FormData();
+         formdata.append('product_id', product.id);
+         formdata.append('user_id', userData?.user_id);
+         formdata.append('quantity', quantityValue);
+         formdata.append('price', product.price);
+         formdata.append('shipping_amount', product.shipping_amount);
+         formdata.append("country", currentAddress.country);
+         formdata.append('size', sizeValue);
+         formdata.append('color', colorValue);
+         formdata.append('cart_id', cartId);
+
+         // for (let [key, value] of formdata.entries()) {
+         //    console.log(`${key}: ${value}`);
+         // }
+
+         const response = await apiInstance.post('cart-view/', formdata);
+         console.log(response.data);
+      } catch (error) {
+         console.error(error);
+      }
    }
 
    return (

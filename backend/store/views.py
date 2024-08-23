@@ -40,6 +40,17 @@ class CartAPIView(generics.ListCreateAPIView):
    permission_classes = [AllowAny]
    
    def create(self, request, *args, **kwargs):
+      
+      # product_id = request.data.get('product_id')
+      # user_id = request.data.get('user_id')
+      # quantity = request.data.get('quantity')
+      # price = request.data.get('price')
+      # shipping_amount = request.data.get('shipping_amount')
+      # country = request.data.get('country')
+      # size = request.data.get('size')
+      # color = request.data.get('color')
+      # cart_id = request.data.get('cart_id')
+      
       payload = request.data
       
       product_id = payload['product_id']
@@ -80,13 +91,16 @@ class CartAPIView(generics.ListCreateAPIView):
          cart.cart_id = cart_id
          
          service_fee_percent = 20/100
-         cart.service_fee = service_fee_percent * cart.sub_total
+         cart.service_fee = Decimal(service_fee_percent) * cart.sub_total
          
          cart.total = cart.sub_total + cart.shipping_amount + cart.tax_fee + cart.service_fee
+         
+         print(f"Received data: {request.data}")
+         print(f"Received country: {country}")
+         
          cart.save()
          
-         return Response({
-            'message': 'Cart updated successfully'}, status=status.HTTP_200_OK)
+         return Response({'message': 'Cart updated successfully'}, status=status.HTTP_200_OK)
       else:
          cart = Cart()
          cart.product = product
@@ -102,7 +116,7 @@ class CartAPIView(generics.ListCreateAPIView):
          cart.cart_id = cart_id
          
          service_fee_percent = 20/100
-         cart.service_fee = service_fee_percent * cart.sub_total
+         cart.service_fee = Decimal(service_fee_percent) * cart.sub_total
          
          cart.total = cart.sub_total + cart.shipping_amount + cart.tax_fee + cart.service_fee
          cart.save()
