@@ -15,7 +15,7 @@ class Category(models.Model):
     title = models.CharField(
         max_length=100, help_text='Name of the category', unique=True, null=False, blank=False)
     image = models.FileField(upload_to='category',
-                             null=True, blank=True, default="category.jpg")
+        null=True, blank=True, default="category.jpg")
     active = models.BooleanField(default=False)
     slug = models.SlugField(max_length=100, unique=True)
 
@@ -38,8 +38,8 @@ class Product(models.Model):
 
     title = models.CharField(
         max_length=100, help_text='Name of the product', unique=True, null=False, blank=False)
-    image = models.FileField(upload_to='product', null=True,
-                             blank=True, default="product.jpg")
+    image = models.FileField(
+        upload_to='product', null=True, blank=True, default="product.jpg")
     category = models.ForeignKey(
         Category, on_delete=models.SET_NULL, null=True, blank=True)
     description = models.TextField(
@@ -61,7 +61,7 @@ class Product(models.Model):
     rating = models.PositiveIntegerField(default=0, null=True, blank=True)
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
     pid = ShortUUIDField(unique=True, length=10, prefix='PID',
-                         alphabet='abcdefghijk1234567890')
+        alphabet='abcdefghijk1234567890')
     slug = models.SlugField(max_length=100, unique=True)
     date = models.DateTimeField(auto_now_add=True)
 
@@ -69,10 +69,6 @@ class Product(models.Model):
 
     def __str__(self):
         return str(self.title)
-
-    # def product_rating(self):
-    #    product_rating = Review.objects.filter(product=self).aggregate(avg_rating=models.Avg('rating'))
-    #    return product_rating['avg_rating']
 
     def product_rating(self):
         product_rating = Review.objects.filter(
@@ -94,14 +90,17 @@ class Product(models.Model):
     def size(self):
         return Size.objects.filter(product=self)
 
+    def save(self, *args, **kwargs):
+        self.rating = self.product_rating()
+        super(Product, self).save(*args, **kwargs)
     # class Meta:
     #    verbose_name_plural = 'Products'
     #    ordering = ['-date']
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(str(self.title))
-        self.rating = self.product_rating()
+            self.slug = slugify(self.name)
+
         super(Product, self).save(*args, **kwargs)
 
 
@@ -110,7 +109,8 @@ class Gallery(models.Model):
         Product, on_delete=models.CASCADE, related_name='gallery')
     image = models.FileField(upload_to="products", default="product.jpg")
     active = models.BooleanField(default=True)
-    gid = ShortUUIDField(unique=True, length=10, prefix='GID', alphabet='abcdefghijk1234567890')
+    gid = ShortUUIDField(unique=True, length=10, prefix='GID',
+         alphabet='abcdefghijk1234567890')
 
     def __str__(self):
         return str(self.product.title)
@@ -155,7 +155,8 @@ class Color(models.Model):
 
 class Cart(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    user = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True)
     quantity = models.PositiveIntegerField(default=0)
     price = models.DecimalField(
         default=0.00, max_digits=12, decimal_places=2, help_text='Price of the product')
@@ -242,7 +243,8 @@ class CartOrder(models.Model):
     country = models.CharField(
         max_length=100, help_text='Country of the user', null=True, blank=True)
 
-    oid = ShortUUIDField(unique=True, length=10, alphabet='abcdefghijk1234567890')
+    oid = ShortUUIDField(unique=True, length=10,
+                         alphabet='abcdefghijk1234567890')
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -278,7 +280,8 @@ class CartOrderItem(models.Model):
         default=0.00, max_digits=12, decimal_places=2, help_text='Initial total amount')
     saved = models.DecimalField(
         default=0.00, max_digits=12, decimal_places=2, help_text='Saved amount')
-    oid = ShortUUIDField(unique=True, length=10, alphabet='abcdefghijk1234567890')
+    oid = ShortUUIDField(unique=True, length=10,
+        alphabet='abcdefghijk1234567890')
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -387,11 +390,3 @@ class Tax(models.Model):
     class Meta:
         verbose_name_plural = 'Taxes'
         ordering = ['country']
-
-
-class Translation(models.Model):
-    text = models.CharField(max_length=100, help_text='Text to be translated')
-    translation = models.CharField(max_length=100, help_text='Translated text')
-
-    def __str__(self):
-        return self.text

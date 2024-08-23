@@ -2,9 +2,44 @@ import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom';
 import apiInstance from '../../utils/axios';
 
+
 const Product = () => {
    const [products, setProducts] = useState([])
    const [category, setCategory] = useState([])
+
+   const [sizeValue, setSizeValue] = useState([])
+   const [colorValue, setColorValue] = useState([])
+   const [quantityValue, setQuantityValue] = useState(1)
+
+   const [selectedProduct, setSelectedProduct] = useState({})
+   const [selectedColors, setSelectedColors] = useState({})
+   const [selectedSize, setSelectedSize] = useState({})
+
+
+   const handleColorButtonClick = (event, product_id, colorName) => {
+      setColorValue(colorName)
+      setSelectedProduct(product_id)
+
+      setSelectedColors((prev) => ({
+         ...prev,
+         [product_id]: colorName
+      }))
+   }
+
+   const handleSizeButtonClick = (event, product_id, sizeName) => {
+      setSizeValue(sizeName)
+      setSelectedProduct(product_id)
+
+      setSelectedSize((prev) => ({
+         ...prev,
+         [product_id]: sizeName
+      }))
+   }
+
+   const handleQuantityChange = (event, product_id) => {
+      setQuantityValue(event.target.value)
+      setSelectedProduct(product_id)
+   }
 
    useEffect(() => {
       apiInstance.get(`products/`).then((res) => {
@@ -98,57 +133,51 @@ const Product = () => {
                                     >
                                        <div className="d-flex flex-column">
                                           <li className="p-1">
-                                             <b>Size</b>: XL
+                                             <b>Quantity</b>
                                           </li>
                                           <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
                                              <li>
-                                                <button className="btn btn-secondary btn-sm me-2 mb-1">
-                                                   XXL
-                                                </button>
-                                             </li>
-                                             <li>
-                                                <button className="btn btn-secondary btn-sm me-2 mb-1">
-                                                   XXL
-                                                </button>
-                                             </li>
-                                             <li>
-                                                <button className="btn btn-secondary btn-sm me-2 mb-1">
-                                                   XXL
-                                                </button>
+                                                <input className='form-control' onChange={(e) => handleQuantityChange(e, product.id)} type='number'/>
                                              </li>
                                           </div>
                                        </div>
-                                       <div className="d-flex flex-column mt-3">
+                                    {product.size?.length > 0 &&
+                                       <div className="d-flex flex-column">
                                           <li className="p-1">
-                                             <b>COlor</b>: Red
+                                             <b>Size</b>: {selectedSize[product.id] || 'Select Size' }
                                           </li>
                                           <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
-                                             <li>
-                                                <button
-                                                   className="btn btn-sm me-2 mb-1 p-3"
-                                                   style={{
-                                                      backgroundColor: "red",
-                                                   }}
-                                                />
-                                             </li>
-                                             <li>
-                                                <button
-                                                   className="btn btn-sm me-2 mb-1 p-3"
-                                                   style={{
-                                                      backgroundColor: "green",
-                                                   }}
-                                                />
-                                             </li>
-                                             <li>
-                                                <button
-                                                   className="btn btn-sm me-2 mb-1 p-3"
-                                                   style={{
-                                                      backgroundColor: "yellow",
-                                                   }}
-                                                />
-                                             </li>
+                                             {product.size?.map(
+                                                (size, index) => (
+                                                   <li key={index}>
+                                                      <button onClick={(e) => handleSizeButtonClick(e, product.id, size.name)} className="btn btn-secondary btn-sm me-2 mb-1">
+                                                         {size.name}
+                                                      </button>
+                                                   </li>
+                                                )
+                                             )}
                                           </div>
                                        </div>
+                                       }  
+                                    {product.color?.length > 0 &&
+                                       <div className="d-flex flex-column mt-3">
+
+                                          <li className="p-1">
+                                             <b>Color</b>: Red
+                                          </li>
+                                          <div className="p-1 mt-0 pt-0 d-flex flex-wrap">
+                                             {product.color?.map((color, index) => (
+                                             <li key={index}>
+                                                <button
+                                                   className="btn btn-sm me-2 mb-1 p-3"
+                                                   style={{backgroundColor: `${color.color_code}`}}
+                                                   onClick={(e) => handleColorButtonClick(e, product.id, color.name)}
+                                                />
+                                             </li>
+                                             ))}
+                                          </div>
+                                       </div>
+                                       }
                                        <div className="d-flex mt-3 p-1">
                                           <button
                                              type="button"
