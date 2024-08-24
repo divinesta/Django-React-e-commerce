@@ -4,7 +4,15 @@ import apiInstance from '../../utils/axios';
 import GetCurrentAddress from '../plugin/UserCountry';
 import UserData from '../plugin/UserData';
 import CartId from '../plugin/CARTID';
+import Swal from 'sweetalert2';
 
+const Toast = Swal.mixin({
+   toast: true,
+   position: 'top',
+   showConfirmButton: false,
+   timer: 3000,
+   timerProgressBar: true,
+})
 
 const Product = () => {
    const [products, setProducts] = useState([])
@@ -63,6 +71,11 @@ const Product = () => {
 
       const response = await apiInstance.post(`cart-view/`, formdata)
       console.log(response.data)
+
+      Toast.fire({
+         icon: 'success',
+         title: response.data.message
+      })
    }
 
    useEffect(() => {
