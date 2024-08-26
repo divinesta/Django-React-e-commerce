@@ -10,6 +10,7 @@ import StoreHeader from './views/base/StoreHeader';
 import StoreFooter from './views/base/StoreFooter';
 import Product from './views/store/Product';
 import ProductDetail from './views/store/ProductDetail';
+import Cart from './views/store/Cart';
 
 const App = () => {
   
@@ -26,7 +27,8 @@ const App = () => {
 
         {/* Store Component */}
         <Route path="/" element={<Product />} />S
-        <Route path="/detail/:slug/" element={<ProductDetail />} />S
+        <Route path="/detail/:slug/" element={<ProductDetail />} />
+        <Route path="/cart/" element={<Cart />} />
       </Routes>
       <StoreFooter />
     </BrowserRouter>
