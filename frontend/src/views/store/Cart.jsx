@@ -8,6 +8,7 @@ import UserData from '../plugin/UserData';
 const Cart = () => {
    const [cart, setCart] = useState([]);
    const [cartTotal, setCartTotal] = useState(0);
+   const [productQuantities, setProductQuantities] = useState('');
 
    const userData = UserData();
    const cart_id = CartId();
@@ -38,7 +39,24 @@ const Cart = () => {
             fetchCartTotal(cart_id, null);
          }, [])
       }
-   } 
+   }
+
+   useEffect(() => {
+      const initialQuantities = {};
+      cart.forEach((c) => {
+         initialQuantities[c.product.id] = c.quantity;
+      })
+      setProductQuantities(initialQuantities);
+   }, [cart])
+   
+   const handleQuantityChange = (event, product_id ) => {
+      const quantity = event.target.value;
+
+      setProductQuantities((prevState) => ({
+         ...prevState,
+         [product_id]: quantity,
+      })); 
+   }
 
    return (
       <>
@@ -142,8 +160,9 @@ const Cart = () => {
                                              <div className="form-outline">
                                                 <input
                                                    type="number"
+                                                   onChange={(e) => handleQuantityChange(e, c.product.id)}
                                                    className="form-control"
-                                                   value={c.quantity}
+                                                   value={productQuantities[c.product?.id] || c.quantity}
                                                    min={1}
                                                 />
                                              </div>
