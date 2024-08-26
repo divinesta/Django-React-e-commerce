@@ -1,7 +1,35 @@
-import React from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import apiInstance from "../../utils/axios";
+import CartId from '../plugin/CARTID';
+import UserData from '../plugin/UserData';
+
 
 const Cart = () => {
+   const [cart, setCart] = useState([]);
+
+   const userData = UserData();
+   const cart_id = CartId();
+
+   const fetchCartData = (cartId, userId) => {
+      const url = userId ? `/cart-list/${cartId}/${userId}` : `/cart-list/${cartId}`;
+      apiInstance.get(url).then((res) => {
+         setCart(res.data);
+      })
+   }
+
+   if(cart_id !== null || cart_id !== undefined) {
+      if (userData !== undefined) {
+         useEffect(() => {
+            fetchCartData(cart_id, userData?.user_id); 
+         }, [])  
+      } else {
+         useEffect(() => {
+            fetchCartData(cart_id, null);
+         }, [])
+      }
+   } 
+
    return (
       <>
          <main className="mt-5">
@@ -12,7 +40,8 @@ const Cart = () => {
                         <div className="row gx-lg-5 mb-5">
                            <div className="col-lg-8 mb-4 mb-md-0">
                               <section className="mb-5">
-                                 <div className="row border-bottom mb-4">
+                                 {cart?.map((c, index) =>(
+                                    <div className="row border-bottom mb-4" key={index}>
                                     <div className="col-md-2 mb-4 mb-md-0">
                                        <div
                                           className="bg-image ripple rounded-5 mb-4 overflow-hidden d-block"
@@ -20,11 +49,11 @@ const Cart = () => {
                                        >
                                           <Link to="">
                                              <img
-                                                src="https://www.eclosio.ong/wp-content/uploads/2018/08/default.png"
+                                                src={c.product?.image}
                                                 className="w-100"
                                                 alt=""
                                                 style={{
-                                                   height: "100px",
+                                                   width: "100px",
                                                    objectFit: "cover",
                                                    borderRadius: "10px",
                                                 }}
@@ -48,37 +77,41 @@ const Cart = () => {
                                           to={null}
                                           className="fw-bold text-dark mb-4"
                                        >
-                                          Product Title
+                                          {c.product?.title}
                                        </Link>
                                        <p className="mb-0">
                                           <span className="text-muted me-2">
                                              Price:
                                           </span>
-                                          <span>$20.00</span>
+                                          <span>${c.price}</span>
                                        </p>
-                                       <p className="mb-0">
+                                       {c.size !== "No Size" && 
+                                          <p className="mb-0">
                                           <span className="text-muted me-2">
                                              Size:
                                           </span>
-                                          <span>XXL</span>
+                                          <span>{c.size}</span>
                                        </p>
-                                       <p className="mb-0">
+                                       }
+                                       {c.color !== "No Color" &&
+                                          <p className="mb-0">
                                           <span className="text-muted me-2">
                                              Color:
                                           </span>
-                                          <span>Pink</span>
+                                          <span>{c.color}</span>
                                        </p>
+                                       }
                                        <p className="mb-0">
                                           <span className="text-muted me-2">
                                              Stock Qty:
                                           </span>
-                                          <span>3</span>
+                                          <span>{c.product?.stock_qty}</span>
                                        </p>
                                        <p className="mb-0">
                                           <span className="text-muted me-2">
                                              Vendor:
                                           </span>
-                                          <span>Desphixs</span>
+                                          <span>{c.product?.vendor?.name}</span>
                                        </p>
                                        <p className="mt-3">
                                           <button className="btn btn-danger ">
@@ -95,7 +128,7 @@ const Cart = () => {
                                              <input
                                                 type="number"
                                                 className="form-control"
-                                                value={1}
+                                                value={c.quantity}
                                                 min={1}
                                              />
                                           </div>
@@ -110,7 +143,9 @@ const Cart = () => {
                                        </h5>
                                     </div>
                                  </div>
+                              ))}
 
+                                 {cart.length < 1 && 
                                  <>
                                     <h5>Your Cart Is Empty</h5>
                                     <Link to="/">
@@ -118,9 +153,9 @@ const Cart = () => {
                                        <i className="fas fa-shopping-cart"></i>{" "}
                                        Continue Shopping
                                     </Link>
-                                 </>
+                                 </>}
                               </section>
-                              <div>
+                              {cart?.length > 0 && <div>
                                  <h5 className="mb-4 mt-4">
                                     Personal Information
                                  </h5>
@@ -256,7 +291,7 @@ const Cart = () => {
                                        </div>
                                     </div>
                                  </div>
-                              </div>
+                              </div>}
                            </div>
                            <div className="col-lg-4 mb-4 mb-md-0">
                               {/* Section: Summary */}
