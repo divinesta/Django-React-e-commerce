@@ -181,22 +181,39 @@ const Cart = () => {
             title: "Mising fields",
             text: "Please fill in all the required fields",
          });
+      } else {
+         try {
+            const formdata = new FormData();
+
+            formdata.append("full_name", fullName);
+            formdata.append("email", email);
+            formdata.append("mobile", mobile);
+            formdata.append("address", address);
+            formdata.append("city", city);
+            formdata.append("state", state);
+            formdata.append("country", country);
+            formdata.append("cart_id", cart_id);
+            formdata.append("user_id", userData ? userData?.user_id : 0);
+
+            const response = await apiInstance.post("create-order/", formdata);
+            console.log(response.data);
+
+            if (response.data.message) {
+               Toast.fire({
+                  icon: "success",
+                  title: response.data.message,
+               });
+            } else {
+               Toast.fire({
+                  icon: "error",
+                  title: "An error occured",
+               });
+            }
+         } catch (error) {
+            console.error("Error creating order:", error);
+         }
       }
 
-      const formdata = new FormData();
-
-      formdata.append("full_name", fullName);
-      formdata.append("email", email);
-      formdata.append("mobile", mobile);
-      formdata.append("address", address);
-      formdata.append("city", city);
-      formdata.append("state", state);
-      formdata.append("country", country);
-      formdata.append("cart_id", cart_id);
-      formdata.append("user_id", userData ? userData?.user_id : 0);
-
-      const response = await apiInstance.post("create-order/", formdata);
-      console.log(response.data);
       // if (response.data.status === "success") {
       //    Toast.fire({
       //       icon: "success",
