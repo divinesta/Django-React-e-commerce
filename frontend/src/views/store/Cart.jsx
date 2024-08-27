@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import apiInstance from "../../utils/axios";
-import CartId from '../plugin/CARTID';
-import UserData from '../plugin/UserData';
+import CartId from "../plugin/CARTID";
+import UserData from "../plugin/UserData";
 import GetCurrentAddress from "../plugin/UserCountry";
 import Swal from "sweetalert2";
 
@@ -14,41 +14,53 @@ const Toast = Swal.mixin({
    timerProgressBar: true,
 });
 
-
 const Cart = () => {
    const [cart, setCart] = useState([]);
    const [cartTotal, setCartTotal] = useState(0);
-   const [productQuantities, setProductQuantities] = useState('');
+   const [productQuantities, setProductQuantities] = useState("");
+
+   const [fullName, setFullName] = useState("");
+   const [email, setEmail] = useState("");
+   const [mobile, setMobile] = useState("");
+
+   const [address, setAddress] = useState("");
+   const [city, setCity] = useState("");
+   const [state, setState] = useState("");
+   const [country, setCountry] = useState("");
 
    const userData = UserData();
    const cart_id = CartId();
    const currentAddress = GetCurrentAddress();
 
    const fetchCartData = (cartId, userId) => {
-      const url = userId ? `/cart-list/${cartId}/${userId}` : `/cart-list/${cartId}`;
+      const url = userId
+         ? `/cart-list/${cartId}/${userId}`
+         : `/cart-list/${cartId}`;
       apiInstance.get(url).then((res) => {
          setCart(res.data);
-      })
-   }
+      });
+   };
 
    const fetchCartTotal = (cartId, userId) => {
-      const url = userId ? `/cart-detail/${cartId}/${userId}` : `/cart-detail/${cartId}`;
+      const url = userId
+         ? `/cart-detail/${cartId}/${userId}`
+         : `/cart-detail/${cartId}`;
       apiInstance.get(url).then((res) => {
          setCartTotal(res.data);
-      })
-   }
+      });
+   };
 
-   if(cart_id !== null || cart_id !== undefined) {
+   if (cart_id !== null || cart_id !== undefined) {
       if (userData !== undefined) {
          useEffect(() => {
-            fetchCartData(cart_id, userData?.user_id); 
-            fetchCartTotal(cart_id, userData?.user_id); 
-         }, [])  
+            fetchCartData(cart_id, userData?.user_id);
+            fetchCartTotal(cart_id, userData?.user_id);
+         }, []);
       } else {
          useEffect(() => {
             fetchCartData(cart_id, null);
             fetchCartTotal(cart_id, null);
-         }, [])
+         }, []);
       }
    }
 
@@ -56,20 +68,26 @@ const Cart = () => {
       const initialQuantities = {};
       cart.forEach((c) => {
          initialQuantities[c.product.id] = c.quantity;
-      })
+      });
       setProductQuantities(initialQuantities);
-   }, [cart])
-   
-   const handleQuantityChange = (event, product_id ) => {
+   }, [cart]);
+
+   const handleQuantityChange = (event, product_id) => {
       const quantity = event.target.value;
 
       setProductQuantities((prevState) => ({
          ...prevState,
          [product_id]: quantity,
-      })); 
-   }
+      }));
+   };
 
-   const updateCart = async (product_id, price, shipping_amount, colorValue, sizeValue) => {
+   const updateCart = async (
+      product_id,
+      price,
+      shipping_amount,
+      colorValue,
+      sizeValue
+   ) => {
       const quantityValue = productQuantities[product_id];
 
       const formdata = new FormData();
@@ -84,15 +102,96 @@ const Cart = () => {
       formdata.append("color", colorValue);
       formdata.append("cart_id", cart_id);
 
-      const response = await apiInstance.post('cart-view/', formdata)
+      const response = await apiInstance.post("cart-view/", formdata);
 
       fetchCartData(cart_id, userData?.user_id);
       fetchCartTotal(cart_id, userData?.user_id);
-      
+
       Toast.fire({
          icon: "success",
          title: response.data.message,
       });
+   };
+
+   const handleDeleteCartItem = async (itemId) => {
+      const url = userData?.user_id
+         ? `cart-delete/${cart_id}/${itemId}/${userData?.user_id}/`
+         : `cart-delete/${cart_id}/${itemId}/`;
+
+      // await apiInstance.delete(url)
+
+      // fetchCartData(cart_id, userData?.user_id);
+
+      try {
+         await apiInstance.delete(url);
+         fetchCartData(cart_id, userData?.user_id);
+         fetchCartTotal(cart_id, userData?.user_id);
+      } catch (error) {
+         console.error("Error deleting cart item:", error);
+      }
+
+      Toast.fire({
+         icon: "success",
+         title: "Item removed from cart",
+      });
+   };
+
+   const handleChange = (event) => {
+      const { name, value } = event.target;
+      switch (name) {
+         case "fullName":
+            setFullName(value);
+            break;
+         case "email":
+            setEmail(value);
+            break;
+         case "mobile":
+            setMobile(value);
+            break;
+         case "address":
+            setAddress(value);
+            break;
+         case "city":
+            setCity(value);
+            break;
+         case "state":
+            setState(value);
+            break;
+         case "country":
+            setCountry(value);
+            break;
+         default:
+            break;
+      }
+   };
+
+   const createOrder = async () => {
+      console.log(fullName, email, mobile, address, city, state, country);
+      //    const formdata = new FormData();
+
+      //    formdata.append("cart_id", cart_id);
+      //    formdata.append("user_id", userData?.user_id);
+      //    formdata.append("full_name", fullName);
+      //    formdata.append("email", email);
+      //    formdata.append("mobile", mobile);
+      //    formdata.append("address", address);
+      //    formdata.append("city", city);
+      //    formdata.append("state", state);
+      //    formdata.append("country", country);
+
+      //    const response = await apiInstance.post("order-create/", formdata);
+
+      //    if (response.data.status === "success") {
+      //       Toast.fire({
+      //          icon: "success",
+      //          title: response.data.message,
+      //       });
+      //    } else {
+      //       Toast.fire({
+      //          icon: "error",
+      //          title: response.data.message,
+      //       });
+      // }
    };
 
    return (
@@ -184,7 +283,12 @@ const Cart = () => {
                                              </span>
                                           </p>
                                           <p className="mt-3">
-                                             <button className="btn btn-danger ">
+                                             <button
+                                                onClick={() =>
+                                                   handleDeleteCartItem(c.id)
+                                                }
+                                                className="btn btn-danger "
+                                             >
                                                 <small>
                                                    <i className="fas fa-trash me-2" />
                                                    Remove
@@ -268,7 +372,9 @@ const Cart = () => {
                                                 type="text"
                                                 id=""
                                                 name="fullName"
+                                                value={fullName}
                                                 className="form-control"
+                                                onChange={handleChange}
                                              />
                                           </div>
                                        </div>
@@ -289,6 +395,8 @@ const Cart = () => {
                                                 id="form6Example1"
                                                 className="form-control"
                                                 name="email"
+                                                value={email}
+                                                onChange={handleChange}
                                              />
                                           </div>
                                        </div>
@@ -306,6 +414,8 @@ const Cart = () => {
                                                 id="form6Example1"
                                                 className="form-control"
                                                 name="mobile"
+                                                value={mobile}
+                                                onChange={handleChange}
                                              />
                                           </div>
                                        </div>
@@ -330,6 +440,8 @@ const Cart = () => {
                                                 id="form6Example1"
                                                 className="form-control"
                                                 name="address"
+                                                value={address}
+                                                onChange={handleChange}
                                              />
                                           </div>
                                        </div>
@@ -347,6 +459,8 @@ const Cart = () => {
                                                 id="form6Example1"
                                                 className="form-control"
                                                 name="city"
+                                                value={city}
+                                                onChange={handleChange}
                                              />
                                           </div>
                                        </div>
@@ -365,6 +479,8 @@ const Cart = () => {
                                                 id="form6Example1"
                                                 className="form-control"
                                                 name="state"
+                                                value={state}
+                                                onChange={handleChange}
                                              />
                                           </div>
                                        </div>
@@ -382,6 +498,8 @@ const Cart = () => {
                                                 id="form6Example1"
                                                 className="form-control"
                                                 name="country"
+                                                value={country}
+                                                onChange={handleChange}
                                              />
                                           </div>
                                        </div>
@@ -425,7 +543,7 @@ const Cart = () => {
                                        &#8358;{cartTotal.total?.toFixed(2)}
                                     </span>
                                  </div>
-                                 <button className="btn btn-primary btn-rounded w-100">
+                                 <button onClick={createOrder} className="btn btn-primary btn-rounded w-100">
                                     Procees to Checkout{" "}
                                     <i className="fas fa-arrow-right"></i>
                                  </button>
