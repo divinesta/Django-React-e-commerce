@@ -174,6 +174,8 @@ class Cart(models.Model):
         max_length=100, help_text='Country of the user', null=True, blank=True)
     size = models.CharField(
         max_length=100, help_text='Size of the product', null=True, blank=True)
+    color = models.CharField(
+        max_length=100, help_text='Color of the product', null=True, blank=True)
     cart_id = models.CharField(
         max_length=100, help_text='Cart ID', null=True, blank=True)
     date = models.DateTimeField(auto_now_add=True)
@@ -253,6 +255,7 @@ class CartOrder(models.Model):
 
 class CartOrderItem(models.Model):
     order = models.ForeignKey(CartOrder, on_delete=models.CASCADE)
+    vendor = models.ForeignKey(Vendor, on_delete=models.SET_NULL, null=True)
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=0)
     price = models.DecimalField(

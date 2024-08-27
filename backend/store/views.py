@@ -249,12 +249,19 @@ class CartOrderAPIView(generics.CreateAPIView):
       country = payload['country']
       cart_id = payload['cart_id']
       user_id = payload['user_id']
+      # print("user_id ======>", user_id)
       
+      # try:
+      #    user = User.objects.get(id=user_id)
+      # except:
+      #    user = None
       if user_id != 0:
-         user = User.objects.get(id=user_id)
+         user = User.objects.filter(id=user_id).first()
       else:
          user = None
          
+      # print("user ======>", user)
+      
       cart_items = Cart.objects.filter(cart_id=cart_id)
       
       total_shipping = Decimal(0.00)
@@ -265,6 +272,7 @@ class CartOrderAPIView(generics.CreateAPIView):
       total_total = Decimal(0.00)
       
       order = CartOrder.objects.create(
+         buyer=user,
          full_name=full_name,
          email=email,
          mobile=mobile,
@@ -315,3 +323,4 @@ class CartOrderAPIView(generics.CreateAPIView):
       order.save()
          
       return Response({'message': 'Order created successfully', "order_oid": order.oid, }, status=status.HTTP_201_CREATED)
+   

@@ -167,30 +167,46 @@ const Cart = () => {
 
    const createOrder = async () => {
       console.log(fullName, email, mobile, address, city, state, country);
-      //    const formdata = new FormData();
+      if (
+         !fullName ||
+         !email ||
+         !mobile ||
+         !address ||
+         !city ||
+         !state ||
+         !country
+      ) {
+         Swal.fire({
+            icon: "warning",
+            title: "Mising fields",
+            text: "Please fill in all the required fields",
+         });
+      }
 
-      //    formdata.append("cart_id", cart_id);
-      //    formdata.append("user_id", userData?.user_id);
-      //    formdata.append("full_name", fullName);
-      //    formdata.append("email", email);
-      //    formdata.append("mobile", mobile);
-      //    formdata.append("address", address);
-      //    formdata.append("city", city);
-      //    formdata.append("state", state);
-      //    formdata.append("country", country);
+      const formdata = new FormData();
 
-      //    const response = await apiInstance.post("order-create/", formdata);
+      formdata.append("full_name", fullName);
+      formdata.append("email", email);
+      formdata.append("mobile", mobile);
+      formdata.append("address", address);
+      formdata.append("city", city);
+      formdata.append("state", state);
+      formdata.append("country", country);
+      formdata.append("cart_id", cart_id);
+      formdata.append("user_id", userData ? userData?.user_id : 0);
 
-      //    if (response.data.status === "success") {
-      //       Toast.fire({
-      //          icon: "success",
-      //          title: response.data.message,
-      //       });
-      //    } else {
-      //       Toast.fire({
-      //          icon: "error",
-      //          title: response.data.message,
-      //       });
+      const response = await apiInstance.post("create-order/", formdata);
+      console.log(response.data);
+      // if (response.data.status === "success") {
+      //    Toast.fire({
+      //       icon: "success",
+      //       title: response.data.message,
+      //    });
+      // } else {
+      //    Toast.fire({
+      //       icon: "error",
+      //       title: response.data.message,
+      //    });
       // }
    };
 
@@ -543,7 +559,10 @@ const Cart = () => {
                                        &#8358;{cartTotal.total?.toFixed(2)}
                                     </span>
                                  </div>
-                                 <button onClick={createOrder} className="btn btn-primary btn-rounded w-100">
+                                 <button
+                                    onClick={createOrder}
+                                    className="btn btn-primary btn-rounded w-100"
+                                 >
                                     Procees to Checkout{" "}
                                     <i className="fas fa-arrow-right"></i>
                                  </button>
