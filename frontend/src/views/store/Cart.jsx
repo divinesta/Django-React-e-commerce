@@ -3,6 +3,16 @@ import { Link } from "react-router-dom";
 import apiInstance from "../../utils/axios";
 import CartId from '../plugin/CARTID';
 import UserData from '../plugin/UserData';
+import GetCurrentAddress from "../plugin/UserCountry";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+   toast: true,
+   position: "top",
+   showConfirmButton: false,
+   timer: 3000,
+   timerProgressBar: true,
+});
 
 
 const Cart = () => {
@@ -12,6 +22,7 @@ const Cart = () => {
 
    const userData = UserData();
    const cart_id = CartId();
+   const currentAddress = GetCurrentAddress();
 
    const fetchCartData = (cartId, userId) => {
       const url = userId ? `/cart-list/${cartId}/${userId}` : `/cart-list/${cartId}`;
@@ -57,6 +68,32 @@ const Cart = () => {
          [product_id]: quantity,
       })); 
    }
+
+   const updateCart = async (product_id, price, shipping_amount, colorValue, sizeValue) => {
+      const quantityValue = productQuantities[product_id];
+
+      const formdata = new FormData();
+
+      formdata.append("product_id", product_id);
+      formdata.append("user_id", userData?.user_id);
+      formdata.append("quantity", quantityValue);
+      formdata.append("price", price);
+      formdata.append("shipping_amount", shipping_amount);
+      formdata.append("country", currentAddress.country);
+      formdata.append("size", sizeValue);
+      formdata.append("color", colorValue);
+      formdata.append("cart_id", cart_id);
+
+      const response = await apiInstance.post('cart-view/', formdata)
+
+      fetchCartData(cart_id, userData?.user_id);
+      fetchCartTotal(cart_id, userData?.user_id);
+      
+      Toast.fire({
+         icon: "success",
+         title: response.data.message,
+      });
+   };
 
    return (
       <>
@@ -160,19 +197,39 @@ const Cart = () => {
                                              <div className="form-outline">
                                                 <input
                                                    type="number"
-                                                   onChange={(e) => handleQuantityChange(e, c.product.id)}
+                                                   onChange={(e) =>
+                                                      handleQuantityChange(
+                                                         e,
+                                                         c.product.id
+                                                      )
+                                                   }
                                                    className="form-control"
-                                                   value={productQuantities[c.product?.id] || c.quantity}
+                                                   value={
+                                                      productQuantities[
+                                                         c.product?.id
+                                                      ] || c.quantity
+                                                   }
                                                    min={1}
                                                 />
                                              </div>
-                                             <button className="ms-2 btn btn-primary">
+                                             <button
+                                                onClick={() =>
+                                                   updateCart(
+                                                      c.product.id,
+                                                      c.product.price,
+                                                      c.product.shipping_amount,
+                                                      c.color,
+                                                      c.size
+                                                   )
+                                                }
+                                                className="ms-2 btn btn-primary"
+                                             >
                                                 <i className="fas fa-rotate-right"></i>
                                              </button>
                                           </div>
                                           <h5 className="mb-2 mt-3 text-center">
                                              <span className="align-middle">
-                                                &#8358;100.00
+                                                &#8358;{c.sub_total}
                                              </span>
                                           </h5>
                                        </div>
@@ -337,7 +394,7 @@ const Cart = () => {
                               <section className="shadow-4 p-4 rounded-5 mb-4">
                                  <h5 className="mb-3">Cart Summary</h5>
                                  <div className="d-flex justify-content-between mb-3">
-                                    <span>Subtotal </span>
+                                    <span>Subtotal</span>
                                     <span>
                                        &#8358;{cartTotal.sub_total?.toFixed(2)}
                                     </span>
