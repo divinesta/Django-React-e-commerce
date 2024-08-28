@@ -282,6 +282,7 @@ class CartOrderItem(models.Model):
         max_length=100, help_text='Color of the product', null=True, blank=True)
 
     # coupons
+    coupon = models.ManyToManyField('store.Coupon', blank=True)
     initial_total = models.DecimalField(
         default=0.00, max_digits=12, decimal_places=2, help_text='Initial total amount')
     saved = models.DecimalField(
