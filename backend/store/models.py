@@ -246,11 +246,14 @@ class CartOrder(models.Model):
         max_length=100, help_text='Country of the user', null=True, blank=True)
 
     oid = ShortUUIDField(unique=True, length=10,
-                         alphabet='abcdefghijk1234567890')
+        alphabet='abcdefghijk1234567890')
     date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return str(self.oid)
+        return self.oid
+    
+    def orderItem(self):
+        return CartOrderItem.objects.filter(order=self)
 
 
 class CartOrderItem(models.Model):

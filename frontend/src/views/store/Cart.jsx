@@ -4,6 +4,7 @@ import apiInstance from "../../utils/axios";
 import CartId from "../plugin/CARTID";
 import UserData from "../plugin/UserData";
 import GetCurrentAddress from "../plugin/UserCountry";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 const Toast = Swal.mixin({
@@ -27,6 +28,8 @@ const Cart = () => {
    const [city, setCity] = useState("");
    const [state, setState] = useState("");
    const [country, setCountry] = useState("");
+
+   const navigate = useNavigate();
 
    const userData = UserData();
    const cart_id = CartId();
@@ -197,6 +200,8 @@ const Cart = () => {
 
             const response = await apiInstance.post("create-order/", formdata);
             console.log(response.data);
+
+            navigate(`/checkout/${response.data.order_oid}/`);
 
             if (response.data.message) {
                Toast.fire({
@@ -585,24 +590,7 @@ const Cart = () => {
                                  </button>
                               </section>
 
-                              {/* Promo code section */}
-                              <section className="shadow rounded-3 card p-4 rounded-5">
-                                 <h5 className="mb-4">Apply Promo Code</h5>
-                                 <div className="d-flex align-items-center">
-                                    <input
-                                       type="text"
-                                       placeholder="promo code"
-                                       className="form-control rounded me-3"
-                                    />
-                                    <button
-                                       type="button"
-                                       className="btn btn-success btn-rounde overflow-vi"
-                                    >
-                                       Apply
-                                    </button>
-                                 </div>
-                              </section>
-                              {/* Promo code section */}
+                              
                            </div>
                         </div>
                      </section>

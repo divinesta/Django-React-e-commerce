@@ -330,6 +330,6 @@ class CheckoutAPIView(generics.RetrieveAPIView):
    lookup_field = 'order_id'
    
    def get_object(self):
-      order_oid = self.kwargs['oid']
+      order_oid = self.kwargs['order_oid']
       order = CartOrder.objects.get(oid=order_oid)
       return order

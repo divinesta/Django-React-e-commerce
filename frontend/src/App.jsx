@@ -11,6 +11,7 @@ import StoreFooter from './views/base/StoreFooter';
 import Product from './views/store/Product';
 import ProductDetail from './views/store/ProductDetail';
 import Cart from './views/store/Cart';
+import Checkout from './views/store/Checkout';
 
 const App = () => {
   
@@ -29,6 +30,7 @@ const App = () => {
         <Route path="/" element={<Product />} />S
         <Route path="/detail/:slug/" element={<ProductDetail />} />
         <Route path="/cart/" element={<Cart />} />
+        <Route path="/checkout/:order_oid/" element={<Checkout />} />
       </Routes>
       <StoreFooter />
     </BrowserRouter>
