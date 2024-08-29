@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import apiInstance from "../../utils/axios";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
+import { SERVER_URL } from '../../utils/constant';
 import Swal from "sweetalert2";
 
 const Toast = Swal.mixin({
@@ -14,6 +15,7 @@ const Toast = Swal.mixin({
 const Checkout = () => {
    const [order, setOrder] = useState([])
    const [couponCode, setCouponCode] = useState("")
+   const [paymentLoading, setPaymentLoading] = useState(false)
 
    const param = useParams()
 
@@ -47,6 +49,11 @@ const fetchOrderData = () => {
       } catch (error) {
          console.log(error)
       }
+   }
+
+   const payWithStripe = (event) => {
+      setPaymentLoading(true)
+      event.target.form.submit()
    }
 
    return (
@@ -221,12 +228,12 @@ const fetchOrderData = () => {
                               <span>Servive Fee </span>
                               <span>&#8358;{order.service_fee}</span>
                            </div>
-                           {order.saved !== "0.00" && 
+                           {order.saved !== "0.00" && (
                               <div className="d-flex text-danger fw-bold justify-content-between mb-3">
                                  <span>Discount </span>
                                  <span>-&#8358;{order.saved}</span>
                               </div>
-                           }
+                           )}
                            <hr className="my-4" />
                            <div className="d-flex justify-content-between fw-bold mb-5">
                               <span>Total </span>
@@ -234,25 +241,27 @@ const fetchOrderData = () => {
                            </div>
 
                            {/* Promo code section */}
-                              <section className="shadow rounded-3 card p-4 mb-4 rounded-5">
-                                 <h5 className="mb-4">Apply Promo Code</h5>
-                                 <div className="d-flex align-items-center">
-                                    <input
-                                       type="text"
-                                       placeholder="promo code"
-                                       className="form-control rounded me-3"
-                                       onChange={(e) => setCouponCode(e.target.value)}
-                                    />
-                                    <button
-                                       type="button"
-                                       className="btn btn-success btn-rounded overflow-view"
-                                       onClick={applyCoupon}
-                                    >
-                                       Apply
-                                    </button>
-                                 </div>
-                              </section>
-                              {/* Promo code section */}
+                           <section className="shadow rounded-3 card p-4 mb-4 rounded-5">
+                              <h5 className="mb-4">Apply Promo Code</h5>
+                              <div className="d-flex align-items-center">
+                                 <input
+                                    type="text"
+                                    placeholder="promo code"
+                                    className="form-control rounded me-3"
+                                    onChange={(e) =>
+                                       setCouponCode(e.target.value)
+                                    }
+                                 />
+                                 <button
+                                    type="button"
+                                    className="btn btn-success btn-rounded overflow-view"
+                                    onClick={applyCoupon}
+                                 >
+                                    Apply
+                                 </button>
+                              </div>
+                           </section>
+                           {/* Promo code section */}
 
                            <div className="shadow p-3 d-flex mt-4 mb-4">
                               <input
@@ -270,19 +279,37 @@ const fetchOrderData = () => {
                               </button>
                            </div>
 
-                           <div
-                              action={`http://127.0.0.1:8000/stripe-checkout/ORDER_ID/`}
-                              method="POST"
-                           >
-                              <button
-                                 type="submit"
-                                 className="btn btn-primary btn-rounded w-100 mt-2"
-                                 style={{ backgroundColor: "#635BFF" }}
+                           {paymentLoading ? (
+                              <form
+                                 action={`${SERVER_URL}/api/v1/stripe-checkout/${order?.oid}/`}
+                                 method="POST"
                               >
-                                 Pay With Stripe{" "}
-                                 <i className="fas fa-credit-card"></i>
-                              </button>
-                           </div>
+                                 <button
+                                    type="submit"
+                                    className="btn btn-primary btn-rounded w-100 mt-2"
+                                    style={{ backgroundColor: "#635BFF" }}
+                                    onClick={payWithStripe}
+                                    disabled
+                                 >
+                                    processing payment...
+                                 </button>
+                              </form>
+                           ) : (
+                              <form
+                                 action={`${SERVER_URL}/api/v1/stripe-checkout/${order?.oid}/`}
+                                 method="POST"
+                              >
+                                 <button
+                                    type="submit"
+                                    className="btn btn-primary btn-rounded w-100 mt-2"
+                                    style={{ backgroundColor: "#635BFF" }}
+                                    onClick={payWithStripe}
+                                 >
+                                    Pay With Stripe{" "}
+                                    <i className="fas fa-credit-card"></i>
+                                 </button>
+                              </form>
+                           )}
 
                            {/* <PayPalScriptProvider options={initialOptions}>
                               <PayPalButtons
