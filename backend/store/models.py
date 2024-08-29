@@ -244,6 +244,8 @@ class CartOrder(models.Model):
         max_length=100, help_text='State of the user', null=True, blank=True)
     country = models.CharField(
         max_length=100, help_text='Country of the user', null=True, blank=True)
+    
+    stripe_session_id = models.CharField(max_length=1000, null=True, blank=True)
 
     oid = ShortUUIDField(unique=True, length=10,
         alphabet='abcdefghijk1234567890')
