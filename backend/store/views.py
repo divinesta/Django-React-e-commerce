@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db.models.aggregates import Count
+from django.conf import settings
 
 from userauths.models import User
 
@@ -13,11 +14,11 @@ from rest_framework.exceptions import NotFound
 
 from decimal import Decimal
 
-import stripe
+import stripe # type: ignore
 
 # Create your views here.
 
-stripe.api_key = "sk_test_51Pt8JWEF9gFvqAIVgR8RsrsJt6SlPR3JjsHwodIetU7Y65SmUBScZPYk1muq2yt75MRohTrEDszVosxTzHwAQUvm00wEKpPQMW"
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class CategoryListAPIView(generics.ListAPIView):
