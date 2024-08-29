@@ -1,17 +1,53 @@
 import React, { useState, useEffect } from 'react'
 import apiInstance from "../../utils/axios";
 import { useParams, useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+
+const Toast = Swal.mixin({
+   toast: true,
+   position: "top",
+   showConfirmButton: false,
+   timer: 3000,
+   timerProgressBar: true,
+});
 
 const Checkout = () => {
    const [order, setOrder] = useState([])
+   const [couponCode, setCouponCode] = useState("")
 
    const param = useParams()
 
+const fetchOrderData = () => {
+   apiInstance.get(`checkout/${param.order_oid}/`).then((res) => {
+      setOrder(res.data);
+   });
+}
+
    useEffect(() => {
-      apiInstance.get(`checkout/${param.order_oid}/`).then((res) => {
-         setOrder(res.data)
-      })
+      fetchOrderData()
    }, [])
+
+   const applyCoupon = async () => {
+      console.log(couponCode)
+      console.log(order.oid)
+
+      const formdata = new FormData()
+      formdata.append("order_oid", order.oid)
+      formdata.append("coupon_code", couponCode)
+
+      try {
+         const response = await apiInstance.post("coupon/", formdata)
+         // setOrder(response.data)
+         // console.log(response.data.message);
+         fetchOrderData()
+         Toast.fire({
+            icon:response.data.icon,
+            title:response.data.message
+         })
+      } catch (error) {
+         console.log(error)
+      }
+   }
 
    return (
       <>
@@ -173,18 +209,24 @@ const Checkout = () => {
                               <span>Subtotal </span>
                               <span>&#8358;{order.sub_total}</span>
                            </div>
-                           <div className="d-flex justify-content-between">
+                           <div className="d-flex justify-content-between mb-3">
                               <span>Shipping </span>
                               <span>&#8358;{order.shipping_amount}</span>
                            </div>
-                           <div className="d-flex justify-content-between">
+                           <div className="d-flex justify-content-between mb-3">
                               <span>Tax Fee</span>
                               <span>&#8358;{order.tax_fee}</span>
                            </div>
-                           <div className="d-flex justify-content-between">
+                           <div className="d-flex justify-content-between mb-3">
                               <span>Servive Fee </span>
                               <span>&#8358;{order.service_fee}</span>
                            </div>
+                           {order.saved !== "0.00" && 
+                              <div className="d-flex text-danger fw-bold justify-content-between mb-3">
+                                 <span>Discount </span>
+                                 <span>-&#8358;{order.saved}</span>
+                              </div>
+                           }
                            <hr className="my-4" />
                            <div className="d-flex justify-content-between fw-bold mb-5">
                               <span>Total </span>
@@ -199,10 +241,12 @@ const Checkout = () => {
                                        type="text"
                                        placeholder="promo code"
                                        className="form-control rounded me-3"
+                                       onChange={(e) => setCouponCode(e.target.value)}
                                     />
                                     <button
                                        type="button"
                                        className="btn btn-success btn-rounded overflow-view"
+                                       onClick={applyCoupon}
                                     >
                                        Apply
                                     </button>

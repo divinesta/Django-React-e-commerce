@@ -346,7 +346,7 @@ class CouponAPIView(generics.CreateAPIView):
       coupon_code = payload['coupon_code']
       
       order = CartOrder.objects.get(oid=order_oid)
-      coupon = Coupon.objects.get(code=coupon_code)      
+      coupon = Coupon.objects.filter(code=coupon_code).first()
       
       
       if coupon:
@@ -367,10 +367,10 @@ class CouponAPIView(generics.CreateAPIView):
                   item.save()
                   order.save()
                   
-                  return Response({'message': 'Coupon Activated'}, status=status.HTTP_200_OK)
+                  return Response({'message': 'Coupon Activated', 'icon':'success'}, status=status.HTTP_200_OK)
                else:
-                  return Response({'message': 'Coupon already used'}, status=status.HTTP_200_OK)
+                  return Response({'message': 'Coupon already used', 'icon':'warning'}, status=status.HTTP_200_OK)
          else:
-            return Response({'message': 'Order Item Does not exist'}, status=status.HTTP_200_OK)
+            return Response({'message': 'Order Item Does not exist', 'icon':'error'}, status=status.HTTP_200_OK)
       else:
-         return Response({'message': 'Coupon does not exist'}, status=status.HTTP_200_OK)
+         return Response({'message': 'Coupon does not exist', 'icon':'error'}, status=status.HTTP_200_OK)
